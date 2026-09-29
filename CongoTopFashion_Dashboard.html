@@ -1,0 +1,1283 @@
+<title>Diagnostic CongoTopFashion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   Palette : la Sape — prune profonde, laiton, neutres teintés prune
+   Séries graphiques validées (bande L, plancher chroma, séparation
+   daltonisme, plancher vision normale, contraste) en clair et sombre.
+   ============================================================ */
+:root {
+  --paper:      #FAF7F8;
+  --surface:    #FFFFFF;
+  --surface-2:  #F2EDEF;
+  --border:     #E3DADE;
+  --border-2:   #CFC2C8;
+  --ink:        #1B1519;
+  --ink-2:      #56474E;
+  --ink-3:      #857179;
+  --brand:      #912061;
+  --brand-soft: #F6E7EF;
+  --brass:      #9A7407;
+  --brass-soft: #F8EFD8;
+
+  --critical:      #9B2C20;
+  --critical-bg:   #FBEAE7;
+  --critical-line: #E8C8C2;
+  --warning:       #7E5B0C;
+  --warning-bg:    #FBF2DF;
+  --warning-line:  #E7D6AC;
+  --good:          #1B6B47;
+  --good-bg:       #E6F2EC;
+  --good-line:     #C0DDCE;
+
+  --s0: #912061;  /* prune   */
+  --s1: #0098B7;  /* sarcelle*/
+  --s2: #D6A20A;  /* laiton  */
+  --s3: #D25030;  /* brique  */
+  --s4: #454EAD;  /* indigo  */
+  --s5: #0A7E3A;  /* vert    */
+  --grid:  #E8E0E3;
+  --axis:  #B7A7AE;
+
+  --shadow: 0 1px 2px rgba(27,21,25,.05), 0 4px 14px rgba(27,21,25,.05);
+  --radius: 10px;
+  --maxw: 1240px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #1B1519;
+    --surface:    #241C21;
+    --surface-2:  #2E242A;
+    --border:     #3B2F36;
+    --border-2:   #4E3F47;
+    --ink:        #F3ECEF;
+    --ink-2:      #C3B2BA;
+    --ink-3:      #93818A;
+    --brand:      #D97BAB;
+    --brand-soft: #3A1F2E;
+    --brass:      #D9AE4A;
+    --brass-soft: #362C18;
+
+    --critical:      #EF8878;
+    --critical-bg:   #3A211D;
+    --critical-line: #5B322B;
+    --warning:       #E0B354;
+    --warning-bg:    #332715;
+    --warning-line:  #514023;
+    --good:          #5FC292;
+    --good-bg:       #17301F;
+    --good-line:     #274B36;
+
+    --s0: #B94F87;
+    --s1: #00A4C0;
+    --s2: #B98D00;
+    --s3: #BB422D;
+    --s4: #4D57B7;
+    --s5: #2E9E52;
+    --grid:  #362A31;
+    --axis:  #6A5A62;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:      #1B1519;
+  --surface:    #241C21;
+  --surface-2:  #2E242A;
+  --border:     #3B2F36;
+  --border-2:   #4E3F47;
+  --ink:        #F3ECEF;
+  --ink-2:      #C3B2BA;
+  --ink-3:      #93818A;
+  --brand:      #D97BAB;
+  --brand-soft: #3A1F2E;
+  --brass:      #D9AE4A;
+  --brass-soft: #362C18;
+
+  --critical:      #EF8878;
+  --critical-bg:   #3A211D;
+  --critical-line: #5B322B;
+  --warning:       #E0B354;
+  --warning-bg:    #332715;
+  --warning-line:  #514023;
+  --good:          #5FC292;
+  --good-bg:       #17301F;
+  --good-line:     #274B36;
+
+  --s0: #B94F87;
+  --s1: #00A4C0;
+  --s2: #B98D00;
+  --s3: #BB422D;
+  --s4: #4D57B7;
+  --s5: #2E9E52;
+  --grid:  #362A31;
+  --axis:  #6A5A62;
+
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.28);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.mono { font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace; }
+.num  { font-variant-numeric: tabular-nums; }
+
+a { color: var(--brand); }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 3px; }
+
+/* ---------------- Barre supérieure ---------------- */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 24px;
+  min-height: 56px;
+}
+.mark { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.mark-glyph {
+  width: 22px; height: 22px; border-radius: 4px;
+  background: var(--brand);
+  display: grid; place-items: center;
+  color: #fff; font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800; font-size: 12px; line-height: 1;
+}
+:root[data-theme="dark"] .mark-glyph,
+:root:not([data-theme="light"]) .mark-glyph { color: #1B1519; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .mark-glyph { color: #fff; } }
+.mark-name { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+
+.navlinks { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.navlinks::-webkit-scrollbar { display: none; }
+.navlinks a {
+  font-size: 12.5px; font-weight: 500; color: var(--ink-2);
+  text-decoration: none; padding: 6px 10px; border-radius: 6px;
+  white-space: nowrap; transition: background .15s, color .15s;
+}
+.navlinks a:hover { background: var(--surface-2); color: var(--ink); }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+/* ---------------- En-tête ---------------- */
+.hero { padding: 56px 0 40px; border-bottom: 1px solid var(--border); }
+.eyebrow {
+  font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 500;
+  letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+}
+.hero h1 { font-size: clamp(32px, 5.2vw, 52px); line-height: 1.06; margin: 14px 0 0; font-weight: 800; }
+.hero h1 em { font-style: normal; color: var(--brand); }
+.hero p.lede {
+  font-size: 17px; color: var(--ink-2); max-width: 60ch; margin: 18px 0 0;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 26px;
+}
+.chip {
+  font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+  padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--border-2); color: var(--ink-2);
+  background: var(--surface);
+}
+
+/* ---------------- Sections ---------------- */
+section { padding: 46px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 68px; }
+section:last-of-type { border-bottom: none; }
+.sec-head { margin-bottom: 26px; }
+.sec-head h2 { font-size: clamp(21px, 2.6vw, 27px); margin-top: 8px; }
+.sec-head p { color: var(--ink-2); margin: 8px 0 0; max-width: 72ch; font-size: 14.5px; }
+
+/* ---------------- Tuiles KPI ---------------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 12px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 16px 14px;
+  display: flex; flex-direction: column; gap: 3px;
+  position: relative; overflow: hidden;
+}
+.kpi::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--brand));
+}
+.kpi-label {
+  font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.kpi-value {
+  font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+  font-size: 27px; line-height: 1.12; font-variant-numeric: tabular-nums;
+  color: var(--accent, var(--ink)); margin-top: 5px;
+}
+.kpi-note { font-size: 12px; color: var(--ink-3); line-height: 1.4; }
+
+/* ---------------- Constats ---------------- */
+.findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px; }
+.finding {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); padding: 18px 18px 18px 20px;
+  position: relative; overflow: hidden;
+}
+.finding::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--sev, var(--ink-3)); }
+.finding.crit { --sev: var(--critical); }
+.finding.warn { --sev: var(--warning); }
+.sev-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px; margin-bottom: 10px;
+}
+.finding.crit .sev-chip { color: var(--critical); background: var(--critical-bg); border: 1px solid var(--critical-line); }
+.finding.warn .sev-chip { color: var(--warning); background: var(--warning-bg); border: 1px solid var(--warning-line); }
+.sev-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.finding h3 { font-size: 16.5px; margin-bottom: 7px; }
+.finding p { margin: 0; font-size: 14px; color: var(--ink-2); }
+.finding .figure {
+  font-family: "IBM Plex Mono", monospace; font-weight: 600;
+  color: var(--sev); font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Cartes graphiques ---------------- */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px 16px;
+  box-shadow: var(--shadow);
+}
+.card > h3 { font-size: 15.5px; margin-bottom: 3px; }
+.card > .card-sub { font-size: 12.5px; color: var(--ink-3); margin: 0 0 14px; }
+.chart-scroll { overflow-x: auto; }
+.chart-scroll svg { display: block; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
+.legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+
+/* ---------------- Tableaux ---------------- */
+.table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 560px; }
+thead th {
+  text-align: left; padding: 11px 14px;
+  font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+  border-bottom: 1px solid var(--border); background: var(--surface-2);
+  white-space: nowrap;
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", monospace; white-space: nowrap; }
+tbody tr:hover td { background: var(--surface-2); }
+caption { caption-side: bottom; padding: 10px 14px; font-size: 12px; color: var(--ink-3); text-align: left; }
+
+.pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600;
+  white-space: nowrap;
+}
+.pill.good { color: var(--good); background: var(--good-bg); border: 1px solid var(--good-line); }
+.pill.warn { color: var(--warning); background: var(--warning-bg); border: 1px solid var(--warning-line); }
+.pill.crit { color: var(--critical); background: var(--critical-bg); border: 1px solid var(--critical-line); }
+.pill.neutral { color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--border-2); }
+
+/* ---------------- Note / encadré ---------------- */
+.note {
+  border-radius: var(--radius); padding: 16px 18px; font-size: 14px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-2);
+}
+.note.crit { background: var(--critical-bg); border-color: var(--critical-line); color: var(--ink); }
+.note.good { background: var(--good-bg); border-color: var(--good-line); color: var(--ink); }
+.note strong { color: var(--ink); }
+.note .lbl {
+  display: block; font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: 7px; font-weight: 600;
+}
+.note.crit .lbl { color: var(--critical); }
+.note.good .lbl { color: var(--good); }
+
+/* ---------------- Plan d'action ---------------- */
+.actions { display: flex; flex-direction: column; gap: 10px; }
+.action {
+  display: grid; grid-template-columns: 42px 1fr auto; gap: 16px; align-items: start;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 15px 18px;
+}
+.action-rank {
+  font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 21px;
+  color: var(--brand); font-variant-numeric: tabular-nums; line-height: 1.3;
+}
+.action h3 { font-size: 15px; margin-bottom: 4px; }
+.action p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.action-impact { text-align: right; display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+.action-impact .val {
+  font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 13.5px;
+  color: var(--good); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+@media (max-width: 720px) {
+  .action { grid-template-columns: 32px 1fr; }
+  .action-impact { grid-column: 2; text-align: left; align-items: flex-start; }
+}
+
+/* ---------------- Infobulle ---------------- */
+#tip {
+  position: fixed; pointer-events: none; opacity: 0; z-index: 100;
+  background: var(--ink); color: var(--paper);
+  padding: 8px 11px; border-radius: 7px; font-size: 12.5px; line-height: 1.5;
+  box-shadow: 0 6px 22px rgba(0,0,0,.24); max-width: 260px;
+  transition: opacity .1s;
+}
+#tip .t-name { font-weight: 600; display: block; margin-bottom: 2px; }
+#tip .t-val { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+
+footer { padding: 34px 0 50px; color: var(--ink-3); font-size: 13px; }
+footer p { margin: 0 0 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .topbar-inner { padding: 0 16px; }
+  .hero { padding: 36px 0 30px; }
+  section { padding: 34px 0; }
+}
+</style>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="mark">
+      <div class="mark-glyph" aria-hidden="true">C</div>
+      <span class="mark-name">CongoTopFashion</span>
+    </div>
+    <nav class="navlinks" aria-label="Sections du diagnostic">
+      <a href="#etat">État</a>
+      <a href="#constats">Constats</a>
+      <a href="#trajectoire">Trajectoire</a>
+      <a href="#ventes">Ventes</a>
+      <a href="#clients">Clients</a>
+      <a href="#logistique">Logistique</a>
+      <a href="#marketing">Marketing</a>
+      <a href="#stocks">Stocks</a>
+      <a href="#projection">Projection</a>
+      <a href="#plan">Plan d'action</a>
+      <a href="#qualite">Données</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Diagnostic de la base commerciale · 2021 — 2025</div>
+      <h1>2,39 M$ de chiffre d'affaires,<br>et <em>8 M$ dormant en stock</em>.</h1>
+      <p class="lede">
+        CongoTopFashion a triplé son activité en cinq ans. L'analyse des 24 tables de la base
+        révèle une croissance qui ralentit, un stock équivalent à 29 années de ventes, et deux
+        indicateurs de pilotage faussés à la source.
+      </p>
+      <div class="hero-meta">
+        <span class="chip">24 tables</span>
+        <span class="chip">100 351 enregistrements</span>
+        <span class="chip">15 000 commandes</span>
+        <span class="chip">2 000 clients</span>
+        <span class="chip">700 références</span>
+        <span class="chip">12 points de vente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAT DE SANTÉ -->
+  <div class="wrap">
+    <section id="etat">
+      <div class="sec-head">
+        <div class="eyebrow">Vue d'ensemble</div>
+        <h2>L'état de santé en douze chiffres</h2>
+        <p>Performance cumulée sur la période analysée. Les valeurs marquées en rouge signalent un écart
+           par rapport à une norme sectorielle ou une incohérence détectée dans le reporting existant.</p>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="note crit" style="margin-top:16px">
+        <span class="lbl">Correction apportée au reporting existant</span>
+        Le tableau de bord actuel affiche une marge nette de <strong>33,45 %</strong>. Ce chiffre est la moyenne
+        arithmétique des marges de chaque commande : il donne le même poids à une commande de 20 $ et à une commande
+        de 2 000 $. La marge réelle, rapportant le bénéfice total au chiffre d'affaires total, est de
+        <strong>28,76 %</strong>. L'écart de 4,7 points fausse les décisions de tarification et d'investissement.
+      </div>
+    </section>
+  </div>
+
+  <!-- CONSTATS -->
+  <div class="wrap">
+    <section id="constats">
+      <div class="sec-head">
+        <div class="eyebrow">Diagnostic</div>
+        <h2>Six constats, classés par gravité</h2>
+        <p>Chaque constat est adossé à un chiffre issu du calcul direct sur les données sources.</p>
+      </div>
+      <div class="findings" id="findings"></div>
+    </section>
+  </div>
+
+  <!-- TRAJECTOIRE -->
+  <div class="wrap">
+    <section id="trajectoire">
+      <div class="sec-head">
+        <div class="eyebrow">Trajectoire</div>
+        <h2>Une croissance forte, mais qui décélère</h2>
+        <p>Le chiffre d'affaires a été multiplié par 3,1 en cinq ans. Le rythme de progression, lui, a été
+           divisé par trois sur la même période.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Chiffre d'affaires réalisé</h3>
+          <p class="card-sub">Commandes hors annulations · en dollars</p>
+          <div class="chart-scroll"><div id="ch-ca-annuel"></div></div>
+        </div>
+        <div class="card">
+          <h3>Croissance annuelle</h3>
+          <p class="card-sub">Variation du chiffre d'affaires par rapport à l'année précédente</p>
+          <div class="chart-scroll"><div id="ch-croissance"></div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3>Chiffre d'affaires mensuel</h3>
+        <p class="card-sub">60 mois observés · le pic de décembre se répète chaque année</p>
+        <div class="chart-scroll"><div id="ch-mensuel"></div></div>
+      </div>
+      <div class="note" style="margin-top:16px">
+        Le panier moyen suit la même inflexion : il progresse de 136 $ à 174 $ jusqu'en 2023, puis plafonne
+        autour de 180 $. La marge nette, elle, reste stable entre 28,5 % et 29,4 % — les coûts d'achat sont
+        bien maîtrisés, le ralentissement vient du volume et non de la rentabilité unitaire.
+      </div>
+    </section>
+  </div>
+
+  <!-- VENTES -->
+  <div class="wrap">
+    <section id="ventes">
+      <div class="sec-head">
+        <div class="eyebrow">Ventes</div>
+        <h2>Où se fait le chiffre d'affaires</h2>
+        <p>Le digital a dépassé la boutique physique, et le catalogue obéit strictement à la loi de Pareto.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Par canal de vente</h3>
+          <p class="card-sub">Les canaux en ligne cumulent 56,7 % du chiffre d'affaires</p>
+          <div class="chart-scroll"><div id="ch-canal"></div></div>
+        </div>
+        <div class="card">
+          <h3>Par point de vente</h3>
+          <p class="card-sub">La structure e-commerce pèse plus que les onze boutiques réunies</p>
+          <div class="chart-scroll"><div id="ch-boutique"></div></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Par catégorie de produits</h3>
+          <p class="card-sub">Chiffre d'affaires et taux de marge associé</p>
+          <div class="chart-scroll"><div id="ch-categorie"></div></div>
+        </div>
+        <div class="card">
+          <h3>Concentration du catalogue</h3>
+          <p class="card-sub">Part cumulée du chiffre d'affaires, références triées par performance</p>
+          <div class="chart-scroll"><div id="ch-pareto"></div></div>
+          <div id="abc-table" style="margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="note good" style="margin-top:16px">
+        <span class="lbl">Opportunité identifiée</span>
+        Les <strong>accessoires de mode</strong> affichent la meilleure marge du catalogue (35,9 %) pour seulement
+        109 001 $ de chiffre d'affaires. À l'inverse, les <strong>uniformes scolaires</strong> cumulent le plus faible
+        chiffre d'affaires (55 651 $) et la plus faible marge (23,5 %) — leur maintien au catalogue mérite d'être posé.
+      </div>
+    </section>
+  </div>
+
+  <!-- CLIENTS -->
+  <div class="wrap">
+    <section id="clients">
+      <div class="sec-head">
+        <div class="eyebrow">Clients</div>
+        <h2>17 % des clients font la moitié du chiffre d'affaires</h2>
+        <p>La valeur est très concentrée, et près d'un tiers de la base a décroché.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Segmentation RFM</h3>
+          <p class="card-sub">Poids de chaque segment en nombre de clients et en chiffre d'affaires</p>
+          <div class="chart-scroll"><div id="ch-rfm"></div></div>
+          <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--s1)"></span>Part des clients</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--s0)"></span>Part du chiffre d'affaires</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Rétention par cohorte</h3>
+          <p class="card-sub">Part des clients de chaque année d'inscription encore actifs les années suivantes</p>
+          <div class="chart-scroll"><div id="ch-cohortes"></div></div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:16px" id="client-kpis"></div>
+      <div class="table-scroll" style="margin-top:16px">
+        <table>
+          <caption>Détail de la segmentation RFM · 2 000 clients</caption>
+          <thead>
+            <tr><th>Segment</th><th class="n">Clients</th><th class="n">Part clients</th>
+                <th class="n">CA cumulé</th><th class="n">Part du CA</th><th class="n">Valeur vie moy.</th></tr>
+          </thead>
+          <tbody id="rfm-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- LOGISTIQUE -->
+  <div class="wrap">
+    <section id="logistique">
+      <div class="sec-head">
+        <div class="eyebrow">Logistique &amp; retours</div>
+        <h2>Un retard de livraison coûte 1,1 point de satisfaction</h2>
+        <p>La performance globale est bonne, mais elle masque un écart net entre modes de livraison.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Motifs de retour</h3>
+          <p class="card-sub">2 000 retours · 64 831 $ remboursés sur la période</p>
+          <div class="chart-scroll"><div id="ch-motifs"></div></div>
+        </div>
+        <div class="card">
+          <h3>Taux de retard par transporteur</h3>
+          <p class="card-sub">Les trois prestataires externes sont statistiquement équivalents</p>
+          <div class="chart-scroll"><div id="ch-transp"></div></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="note crit">
+          <span class="lbl">Le problème est interne, pas contractuel</span>
+          Les trois transporteurs affichent des taux de retard quasi identiques
+          (<strong>14,9 % à 15,7 %</strong>) et des délais équivalents (4,03 à 4,11 jours). Changer de
+          prestataire ne résoudrait rien : la cause se situe dans le processus interne de préparation
+          et d'expédition.
+        </div>
+        <div class="note good">
+          <span class="lbl">Le levier le plus rentable du diagnostic</span>
+          Le <strong>problème de taille</strong> représente 44,1 % des retours (881 cas, 30 450 $ remboursés).
+          Ce motif relève de l'information produit, pas de la qualité : guide des tailles avec mensurations
+          réelles, photos portées, conseil sur WhatsApp avant validation.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="wrap">
+    <section id="marketing">
+      <div class="sec-head">
+        <div class="eyebrow">Marketing</div>
+        <h2>31 % du chiffre d'affaires part en budget publicitaire</h2>
+        <p>Pour une norme sectorielle de 8 à 12 %. Et le modèle d'attribution ne tient pas.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Retour sur investissement par canal</h3>
+          <p class="card-sub">Chiffre d'affaires déclaré rapporté au budget engagé · seuil de rentabilité à 1</p>
+          <div class="chart-scroll"><div id="ch-roas"></div></div>
+        </div>
+        <div class="card">
+          <h3>Effet des promotions sur la rentabilité</h3>
+          <p class="card-sub">Comparaison des commandes avec et sans code promotionnel</p>
+          <div class="chart-scroll"><div id="ch-promo"></div></div>
+          <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--s4)"></span>Sans promotion</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--s3)"></span>Avec promotion</span>
+          </div>
+        </div>
+      </div>
+      <div class="note crit" style="margin-top:16px">
+        <span class="lbl">Le modèle d'attribution est invalide</span>
+        Les campagnes déclarent avoir généré <strong>3 254 203 $</strong> de chiffre d'affaires, alors que
+        l'entreprise en a réalisé <strong>2 385 826 $</strong> au total sur la même période. Le montant attribué
+        dépasse de 36 % le montant réel : une même vente est comptabilisée par plusieurs campagnes à la fois.
+        Aucune décision d'allocation budgétaire ne devrait être prise sur cette base avant correction.
+      </div>
+      <div class="note" style="margin-top:12px">
+        Sous cette réserve, le <strong>classement relatif</strong> des canaux reste exploitable.
+        WhatsApp Business se détache avec le meilleur retour (9,65) et le coût par conversion le plus bas (4,02 $) —
+        cohérent avec les usages en RDC. À l'opposé, 55 campagnes sur 300 affichent un retour inférieur à 1,
+        soit 192 944 $ engagés sans contrepartie.
+      </div>
+    </section>
+  </div>
+
+  <!-- STOCKS -->
+  <div class="wrap">
+    <section id="stocks">
+      <div class="sec-head">
+        <div class="eyebrow">Stocks &amp; approvisionnements</div>
+        <h2>29 années de couverture de stock</h2>
+        <p>Le constat le plus lourd du diagnostic, et le premier levier de trésorerie.</p>
+      </div>
+      <div class="kpis" id="stock-kpis"></div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <h3>Répartition des lignes de stock</h3>
+          <p class="card-sub">6 000 combinaisons produit × point de vente</p>
+          <div class="chart-scroll"><div id="ch-stock"></div></div>
+        </div>
+        <div class="note crit" style="display:flex;flex-direction:column;justify-content:center">
+          <span class="lbl">L'entreprise achète 3,6 fois plus qu'elle ne vend</span>
+          <p style="margin:0 0 12px">
+            Les achats fournisseurs cumulés atteignent <strong>4 922 934 $</strong> sur la période, contre un coût
+            des marchandises vendues de <strong>1 370 696 $</strong>. Les 1 392 lignes classées en surstock
+            représentent à elles seules <strong>4 773 794 $</strong> de trésorerie immobilisée.
+          </p>
+          <p style="margin:0">
+            Et pourtant, <strong>87 ruptures</strong> et 216 lignes sous le stock minimum coexistent avec cet excès :
+            le problème n'est pas seulement un volume global, c'est aussi une mauvaise allocation entre références.
+            <strong>87,8 %</strong> des comptages d'inventaire présentent un écart avec le stock théorique.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PROJECTION -->
+  <div class="wrap">
+    <section id="projection">
+      <div class="sec-head">
+        <div class="eyebrow">Projection</div>
+        <h2>874 k$ attendus en 2026</h2>
+        <p>Régression linéaire sur les 60 mois observés, corrigée d'un coefficient de saisonnalité mensuel.
+           Cette trajectoire n'intègre pas l'effet des actions recommandées : c'est un plancher, pas un objectif.</p>
+      </div>
+      <div class="card">
+        <h3>Chiffre d'affaires mensuel et projection</h3>
+        <p class="card-sub">Historique 2021-2025 et prévision mois par mois pour 2026</p>
+        <div class="chart-scroll"><div id="ch-prev"></div></div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--s0)"></span>Historique observé</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--s2)"></span>Projection 2026</span>
+        </div>
+      </div>
+      <div class="note crit" style="margin-top:16px">
+        <span class="lbl">Le système d'objectifs ne pilote plus rien</span>
+        Aucun des <strong>500 objectifs</strong> fixés sur cinq ans n'a été atteint. Le taux de réalisation moyen
+        est de <strong>14,2 %</strong>. L'objectif annuel par boutique est fixé à 376 767 $ pour un réalisé moyen de
+        45 016 $, soit un facteur 8,4. Le système de primes associé a distribué <strong>69 $</strong> en cinq ans.
+        Les objectifs doivent être recalibrés sur le réalisé de l'année précédente, majoré de 15 à 20 %.
+      </div>
+    </section>
+  </div>
+
+  <!-- PLAN D'ACTION -->
+  <div class="wrap">
+    <section id="plan">
+      <div class="sec-head">
+        <div class="eyebrow">Recommandations</div>
+        <h2>Plan d'action en onze points</h2>
+        <p>Classé par ampleur d'impact et urgence. Hors effet de trésorerie, le potentiel d'amélioration
+           annuel du résultat est estimé entre 394 000 et 724 000 $ — à rapprocher d'un bénéfice annuel
+           actuel de 203 096 $.</p>
+      </div>
+      <div class="actions" id="actions"></div>
+      <div class="note good" style="margin-top:18px">
+        <span class="lbl">Gouvernance de la donnée</span>
+        Trois chantiers transverses conditionnent la fiabilité du pilotage : corriger les formules d'indicateurs
+        agrégés (remplacer les moyennes de pourcentages par des ratios pondérés), refondre le modèle
+        d'attribution marketing, et mettre en place un tableau de bord unique alimenté automatiquement
+        pour éviter la coexistence d'indicateurs divergents.
+      </div>
+    </section>
+  </div>
+
+  <!-- QUALITÉ -->
+  <div class="wrap">
+    <section id="qualite">
+      <div class="sec-head">
+        <div class="eyebrow">Annexe</div>
+        <h2>Qualité de la base de données</h2>
+        <p>Contrôles appliqués aux 24 tables avant toute analyse.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Contrôle</th><th>Périmètre</th><th>Résultat</th><th class="n">Statut</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Doublons de lignes</td><td>24 tables</td><td>Aucun doublon détecté</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Unicité des identifiants</td><td>19 tables transactionnelles</td><td>Aucun identifiant dupliqué</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Intégrité référentielle</td><td>18 relations clé étrangère</td><td>Aucune référence orpheline</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Valeurs aberrantes</td><td>Montants, marges, quantités, âges, délais</td><td>Aucun montant ni marge négatif, aucun âge hors plage</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Cohérence arithmétique</td><td>15 000 commandes</td><td>Montant brut − remise = montant net vérifié</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Valeurs manquantes</td><td>24 tables</td><td>Manquants structurels uniquement, aucun défaut de saisie</td><td class="n"><span class="pill good">Conforme</span></td></tr>
+            <tr><td>Formules d'indicateurs agrégés</td><td>Onglet KPI global</td><td>Marge nette calculée par moyenne de pourcentages</td><td class="n"><span class="pill crit">À corriger</span></td></tr>
+            <tr><td>Modèle d'attribution marketing</td><td>300 campagnes</td><td>CA attribué supérieur de 36 % au CA réel</td><td class="n"><span class="pill crit">À corriger</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="margin-top:16px">
+        Les valeurs manquantes relevées correspondent à des situations métier légitimes et non à des défauts :
+        8 607 commandes sans vendeur (ventes en ligne sans intervention humaine), 8 930 commandes sans promotion
+        (achats hors campagne), 1 613 clients sans entreprise (particuliers), et 931 livraisons sans date
+        d'expédition — qui correspondent exactement aux 931 commandes annulées.
+        <br><br>
+        <strong>Seuls deux traitements ont été appliqués</strong> : suppression des espaces superflus dans les champs
+        texte et conversion explicite des colonnes de dates. Aucune ligne n'a été supprimée, aucune valeur n'a été
+        imputée — la base ne le justifiait pas. Les faiblesses identifiées portent sur les indicateurs calculés,
+        pas sur les données sources.
+      </div>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <footer>
+      <p><strong>CongoTopFashion</strong> — Diagnostic de la base commerciale, période 2021-2025.</p>
+      <p>Analyse réalisée sur les 24 tables et 100 351 enregistrements de la base source.
+         Tous les montants sont exprimés en dollars américains.</p>
+    </footer>
+  </div>
+</main>
+
+<script>
+const D = {"overview": {"ca_total": 2385826.26, "benefice_total": 686049.99, "nb_commandes": 15000, "nb_commandes_valides": 14069, "nb_clients": 2000, "nb_clients_vip": 341, "nb_produits": 700, "nb_boutiques": 12, "panier_moyen": 169.5803724500675, "marge_nette_pct": 28.755236770677513, "taux_retour_pct": 13.333333333333334, "taux_annulation_pct": 6.206666666666667}, "annual": [{"y": 2021, "ca": 228634, "ben": 67165, "nb": 1678, "panier": 136.3, "marge": 29.38, "croiss": null}, {"y": 2022, "ca": 346304, "ben": 100716, "nb": 2261, "panier": 153.2, "marge": 29.08, "croiss": 51.5}, {"y": 2023, "ca": 492486, "ben": 140609, "nb": 2828, "panier": 174.1, "marge": 28.55, "croiss": 42.2}, {"y": 2024, "ca": 609231, "ben": 174464, "nb": 3382, "panier": 180.1, "marge": 28.64, "croiss": 23.7}, {"y": 2025, "ca": 709171, "ben": 203096, "nb": 3920, "panier": 180.9, "marge": 28.64, "croiss": 16.4}], "canal": [{"n": "Boutique Physique", "ca": 914175, "part": 38.3, "panier": 165.7, "nb": 5518}, {"n": "Facebook", "ca": 361577, "part": 15.2, "panier": 167.9, "nb": 2154}, {"n": "Site E-commerce", "ca": 334986, "part": 14.0, "panier": 168.6, "nb": 1987}, {"n": "WhatsApp Business", "ca": 334908, "part": 14.0, "panier": 176.7, "nb": 1895}, {"n": "Instagram", "ca": 320657, "part": 13.4, "panier": 179.0, "nb": 1791}, {"n": "Commercial Terrain", "ca": 119524, "part": 5.0, "panier": 165.1, "nb": 724}], "boutique": [{"n": "E-commerce", "ca": 1352127, "nb": 7827}, {"n": "Kinshasa Limete", "ca": 145896, "nb": 921}, {"n": "Kinshasa Gombe", "ca": 125749, "nb": 738}, {"n": "Goma", "ca": 100927, "nb": 625}, {"n": "Kinshasa Masina", "ca": 98250, "nb": 626}, {"n": "Matadi", "ca": 93722, "nb": 557}, {"n": "Bukavu Ibanda", "ca": 93550, "nb": 549}, {"n": "Kinshasa Ngaliema", "ca": 91560, "nb": 562}, {"n": "Lubumbashi", "ca": 87571, "nb": 519}, {"n": "Kinshasa Kintambo", "ca": 84377, "nb": 518}, {"n": "Mbuji-Mayi Dibindi", "ca": 63806, "nb": 374}, {"n": "Kolwezi Manika", "ca": 48289, "nb": 253}], "categorie": [{"n": "Vêtements Femme", "ca": 582094, "marge": 29.8, "qte": 15243}, {"n": "Vêtements Homme", "ca": 517635, "marge": 26.8, "qte": 10959}, {"n": "Chaussures Homme", "ca": 265486, "marge": 26.8, "qte": 6868}, {"n": "Prêt-à-Porter Traditionnel", "ca": 231633, "marge": 30.6, "qte": 3587}, {"n": "Sacs & Maroquinerie", "ca": 192869, "marge": 28.0, "qte": 5432}, {"n": "Chaussures Femme", "ca": 178003, "marge": 28.2, "qte": 7091}, {"n": "Parfums & Cosmétiques", "ca": 110595, "marge": 29.5, "qte": 4689}, {"n": "Accessoires de Mode", "ca": 109001, "marge": 35.9, "qte": 7279}, {"n": "Vêtements Enfant", "ca": 101023, "marge": 31.0, "qte": 7230}, {"n": "Uniformes Scolaires", "ca": 55651, "marge": 23.5, "qte": 3257}, {"n": "Chaussures Enfant", "ca": 41836, "marge": 28.5, "qte": 2493}], "abc": [{"c": "A", "nb": 254, "ca": 1907130, "pprod": 36.4, "pca": 79.9}, {"c": "B", "nb": 204, "ca": 358873, "pprod": 29.3, "pca": 15.0}, {"c": "C", "nb": 239, "ca": 119824, "pprod": 34.3, "pca": 5.0}], "rfm": [{"n": "Champions", "nb": 341, "ca": 1174513, "pcl": 17.1, "pca": 49.2, "clv": 3444}, {"n": "Clients Fidèles", "nb": 350, "ca": 669693, "pcl": 17.5, "pca": 28.1, "clv": 1913}, {"n": "Clients Réguliers", "nb": 356, "ca": 231976, "pcl": 17.8, "pca": 9.7, "clv": 652}, {"n": "Clients Perdus", "nb": 387, "ca": 127882, "pcl": 19.4, "pca": 5.4, "clv": 330}, {"n": "Clients à Risque", "nb": 139, "ca": 114794, "pcl": 7.0, "pca": 4.8, "clv": 826}, {"n": "Nouveaux Clients", "nb": 170, "ca": 66969, "pcl": 8.5, "pca": 2.8, "clv": 394}, {"n": "Sans Achat", "nb": 257, "ca": 0, "pcl": 12.8, "pca": 0.0, "clv": 0}], "motifs": [{"n": "Problème de Taille", "nb": 881, "part": 44.0, "mt": 30450}, {"n": "Produit Défectueux", "nb": 433, "part": 21.6, "mt": 12533}, {"n": "Ne Convient Pas", "nb": 300, "part": 15.0, "mt": 8848}, {"n": "Produit Endommagé au Transport", "nb": 209, "part": 10.4, "mt": 7226}, {"n": "Erreur de Commande", "nb": 177, "part": 8.8, "mt": 5773}], "transp": [{"n": "Logistique Interne GTF", "nb": 2686, "delai": 4.06, "retard": 15.7, "sat": 3.82}, {"n": "Partenaire Express Kin", "nb": 2572, "delai": 4.11, "retard": 15.4, "sat": 3.8}, {"n": "Partenaire National RDC", "nb": 2518, "delai": 4.03, "retard": 14.9, "sat": 3.76}, {"n": "Interne (Boutique)", "nb": 6221, "delai": 0.0, "retard": 0.0, "sat": 3.99}], "mkt": [{"n": "WhatsApp Business", "budget": 61703, "ca": 595708, "roas": 9.65, "cpc": 4.02, "conv": 15356}, {"n": "Google Ads", "budget": 63939, "ca": 521751, "roas": 8.16, "cpc": 4.43, "conv": 14425}, {"n": "Instagram", "budget": 50839, "ca": 387657, "roas": 7.63, "cpc": 5.63, "conv": 9024}, {"n": "Facebook", "budget": 60803, "ca": 425983, "roas": 7.01, "cpc": 5.6, "conv": 10857}, {"n": "Site Web", "budget": 77387, "ca": 540024, "roas": 6.98, "cpc": 5.33, "conv": 14522}, {"n": "Affichage", "budget": 176640, "ca": 348556, "roas": 1.97, "cpc": 20.32, "conv": 8694}, {"n": "SMS", "budget": 97272, "ca": 174291, "roas": 1.79, "cpc": 21.53, "conv": 4519}, {"n": "Radio", "budget": 157925, "ca": 260233, "roas": 1.65, "cpc": 23.64, "conv": 6680}], "prev": [{"m": "2026-01", "v": 60103}, {"m": "2026-02", "v": 75991}, {"m": "2026-03", "v": 67040}, {"m": "2026-04", "v": 60231}, {"m": "2026-05", "v": 57440}, {"m": "2026-06", "v": 68646}, {"m": "2026-07", "v": 62607}, {"m": "2026-08", "v": 72032}, {"m": "2026-09", "v": 79652}, {"m": "2026-10", "v": 70141}, {"m": "2026-11", "v": 86969}, {"m": "2026-12", "v": 113204}], "prev_tot": 874056, "prev_croiss": 23.3, "logistique": {"delai_moyen_jours": 2.259269843537901, "delai_median_jours": 2.0, "taux_retard_%": 8.523254983210688, "satisfaction_moyenne": 3.882974923197828, "cout_logistique_total": 59024.41, "cout_logistique_moyen": 3.934960666666667}, "retours": {"nb_retours": 2000, "montant_rembourse_total": 64830.65, "taux_retour_%": 13.333333333333334, "montant_moyen_retour": 32.415325}, "stocks": {"valeur_stock_totale": 8020238.85, "statut_repartition": {"Normal": 4392, "Surstock": 1392, "Faible": 129, "Rupture": 87}, "nb_ruptures": 87, "nb_sous_minimum": 216, "nb_sur_stock": 1575}, "inventaires": {"nb_inventaires": 500, "ecart_total_valeur": -5799.16, "nb_ecarts_negatifs": 272, "perte_valeur_negative": -13644.41, "taux_ecart_%": 87.8}, "mktg": {"budget_total": 746509.51, "ca_genere_total": 3254203.23, "roas_global": 4.359225416967561, "nb_campagnes": 300, "campagnes_non_rentables": 55}, "objectifs": {"taux_realisation_moyen_%": 0.142013, "pct_objectifs_atteints": 0.0, "primes_totales": 69.12}, "concentration": {"part_ca_top_20pct_clients": 62.056074443576634, "part_ca_top_10pct_clients": 43.392432942707245, "clients_inactifs": 888, "statut_repartition": {"Actif": 1112, "Perdu": 327, "Inactif": 304, "Jamais Actif": 257}}, "demo": {"sexe": {"F": 1007, "M": 993}, "tranche_age": {"25-34": 375, "45-54": 371, "35-44": 367, "55-64": 350, "18-24": 320, "65+": 217}, "top_villes": {"Kinshasa": 869, "Lubumbashi": 214, "Bukavu": 134, "Goma": 132, "Kisangani": 121, "Kananga": 111, "Mbuji-Mayi": 110, "Matadi": 83}, "canal_acquisition": {"Bouche-à-Oreille": 320, "Boutique Physique": 310, "Commercial Terrain": 295, "Site E-commerce": 286, "Instagram": 279, "Facebook": 271, "WhatsApp Business": 239}, "csp": {"Employé": 471, "Cadre Moyen": 448, "Cadre Supérieur": 383, "Indépendant": 365, "Ouvrier": 196, "Sans Emploi": 71, "Étudiant": 66}, "age_moyen": 42.941, "revenu_moyen": 697.0255, "clv_moyen": 1756.32323, "clv_vip": 6199.774281524928, "clv_non_vip": 842.9918203737192}, "promo": [{"Avec_Promo": false, "Nb": 8393, "CA": 1464594.45, "Panier_Moyen": 174.5019003931848, "Marge_Moy": 0.3503651376146789, "Benefice": 435703.37}, {"Avec_Promo": true, "Nb": 5676, "CA": 921231.81, "Panier_Moyen": 162.30299682875264, "Marge_Moy": 0.31105657152924593, "Benefice": 250346.62}], "province": [{"n": "Kinshasa", "ca": 1897960}, {"n": "Nord-Kivu", "ca": 100927}, {"n": "Kongo-Central", "ca": 93722}, {"n": "Sud-Kivu", "ca": 93550}, {"n": "Haut-Katanga", "ca": 87571}, {"n": "Kasaï-Oriental", "ca": 63806}, {"n": "Lualaba", "ca": 48289}], "emp": {"nb_vendeurs_actifs": 68, "ca_moyen_par_vendeur": 14591.000441176468, "ecart_top_bottom": 13.37674500322742}, "four": {"montant_achats_total": 4922934.3100000005, "retard_moyen_jours": 1.6576, "pct_achats_en_retard": 34.2, "score_fiabilite_moyen": 0.8581666666666666, "nb_fournisseurs_faible_score": 60}, "impact_retard": {"False": 3.973758200562324, "True": 2.9086336965632857}, "monthly": [{"m": "2021-01", "v": 14148}, {"m": "2021-02", "v": 17327}, {"m": "2021-03", "v": 15737}, {"m": "2021-04", "v": 15535}, {"m": "2021-05", "v": 13007}, {"m": "2021-06", "v": 18373}, {"m": "2021-07", "v": 15769}, {"m": "2021-08", "v": 18832}, {"m": "2021-09", "v": 20679}, {"m": "2021-10", "v": 20812}, {"m": "2021-11", "v": 23937}, {"m": "2021-12", "v": 34479}, {"m": "2022-01", "v": 22613}, {"m": "2022-02", "v": 30974}, {"m": "2022-03", "v": 27810}, {"m": "2022-04", "v": 19481}, {"m": "2022-05", "v": 21949}, {"m": "2022-06", "v": 24690}, {"m": "2022-07", "v": 28302}, {"m": "2022-08", "v": 28480}, {"m": "2022-09", "v": 35708}, {"m": "2022-10", "v": 28908}, {"m": "2022-11", "v": 35618}, {"m": "2022-12", "v": 41769}, {"m": "2023-01", "v": 28173}, {"m": "2023-02", "v": 38998}, {"m": "2023-03", "v": 32266}, {"m": "2023-04", "v": 34208}, {"m": "2023-05", "v": 30303}, {"m": "2023-06", "v": 39611}, {"m": "2023-07", "v": 33865}, {"m": "2023-08", "v": 41788}, {"m": "2023-09", "v": 46461}, {"m": "2023-10", "v": 41401}, {"m": "2023-11", "v": 53907}, {"m": "2023-12", "v": 71505}, {"m": "2024-01", "v": 38365}, {"m": "2024-02", "v": 50339}, {"m": "2024-03", "v": 44628}, {"m": "2024-04", "v": 40098}, {"m": "2024-05", "v": 40489}, {"m": "2024-06", "v": 49671}, {"m": "2024-07", "v": 42278}, {"m": "2024-08", "v": 55763}, {"m": "2024-09", "v": 52698}, {"m": "2024-10", "v": 49576}, {"m": "2024-11", "v": 60626}, {"m": "2024-12", "v": 84699}, {"m": "2025-01", "v": 44290}, {"m": "2025-02", "v": 51964}, {"m": "2025-03", "v": 51677}, {"m": "2025-04", "v": 49816}, {"m": "2025-05", "v": 51674}, {"m": "2025-06", "v": 52811}, {"m": "2025-07", "v": 50442}, {"m": "2025-08", "v": 55727}, {"m": "2025-09", "v": 68392}, {"m": "2025-10", "v": 56672}, {"m": "2025-11", "v": 78054}, {"m": "2025-12", "v": 97651}], "cohortes": {"index": [2021, 2022, 2023, 2024, 2025], "cols": [2021, 2022, 2023, 2024, 2025], "vals": [[86.4, 82.8, 77.0, 70.6, 68.9], [null, 81.7, 79.9, 70.1, 73.0], [null, null, 77.0, 72.8, 73.7], [null, null, null, 74.1, 71.2], [null, null, null, null, 66.9]]}};
+
+const fr = new Intl.NumberFormat('fr-FR');
+const usd = (v, d = 0) => fr.format(Number(v.toFixed(d))) + ' $';
+const kUsd = v => v >= 1e6 ? (v / 1e6).toFixed(2).replace('.', ',') + ' M$'
+                : v >= 1e3 ? Math.round(v / 1e3) + ' k$' : Math.round(v) + ' $';
+const pct = (v, d = 1) => v.toFixed(d).replace('.', ',') + ' %';
+const dec = (v, d = 2) => v.toFixed(d).replace('.', ',');
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const el = (n, attrs = {}, txt) => {
+  const e = document.createElementNS(SVGNS, n);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (txt != null) e.textContent = txt;
+  return e;
+};
+
+/* ---------- infobulle ---------- */
+const tip = document.getElementById('tip');
+function showTip(evt, name, lines) {
+  tip.innerHTML = '<span class="t-name">' + name + '</span>' +
+    lines.map(l => '<span class="t-val">' + l + '</span>').join('<br>');
+  tip.style.opacity = '1';
+  moveTip(evt);
+}
+function moveTip(evt) {
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = evt.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = evt.clientY - r.height - pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function hideTip() { tip.style.opacity = '0'; }
+function bindTip(node, name, lines) {
+  node.addEventListener('mouseenter', e => showTip(e, name, lines));
+  node.addEventListener('mousemove', moveTip);
+  node.addEventListener('mouseleave', hideTip);
+  node.style.cursor = 'default';
+}
+
+/* ---------- barres horizontales ---------- */
+function hbar(mount, rows, opts = {}) {
+  const { labelW = 150, barH = 20, gap = 11, valFmt = kUsd, color = 'var(--s0)',
+          colorFn = null, refLine = null, refLabel = '', valW = 74, tipLines = null } = opts;
+  const w = opts.width || Math.max(400, mount.parentElement.clientWidth || 460);
+  const h = rows.length * (barH + gap) + 8;
+  const plotL = labelW, plotR = w - valW;
+  const max = Math.max(...rows.map(r => r.v), refLine || 0) * 1.02;
+  const svg = el('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: 'img',
+                          'aria-label': opts.aria || 'Graphique en barres' });
+
+  if (refLine != null) {
+    const x = plotL + (refLine / max) * (plotR - plotL);
+    svg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: h - 6,
+      stroke: 'var(--axis)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }));
+    const t = el('text', { x: x + 5, y: 10, 'font-size': 10, fill: 'var(--ink-3)',
+      'font-family': 'IBM Plex Mono, monospace' }, refLabel);
+    svg.appendChild(t);
+  }
+
+  rows.forEach((r, i) => {
+    const y = i * (barH + gap) + 8;
+    const bw = Math.max(2, (r.v / max) * (plotR - plotL));
+    const c = colorFn ? colorFn(r, i) : color;
+
+    const lab = el('text', { x: plotL - 10, y: y + barH / 2 + 4, 'text-anchor': 'end',
+      'font-size': 12, fill: 'var(--ink-2)' }, r.n);
+    svg.appendChild(lab);
+
+    const g = el('g');
+    const rect = el('rect', { x: plotL, y, width: bw, height: barH, rx: 4, fill: c });
+    g.appendChild(rect);
+    svg.appendChild(g);
+    bindTip(g, r.n, tipLines ? tipLines(r) : [valFmt(r.v)]);
+
+    svg.appendChild(el('text', { x: plotL + bw + 8, y: y + barH / 2 + 4, 'font-size': 11.5,
+      fill: 'var(--ink-2)', 'font-family': 'IBM Plex Mono, monospace' }, valFmt(r.v)));
+  });
+  mount.replaceChildren(svg);
+}
+
+/* ---------- barres verticales ---------- */
+function vbar(mount, rows, opts = {}) {
+  const { valFmt = kUsd, color = 'var(--s0)', colorFn = null, hgt = 218, tipLines = null,
+          zero = false } = opts;
+  const w = opts.width || Math.max(320, mount.parentElement.clientWidth || 420);
+  const padL = 8, padR = 8, padT = 26, padB = 26;
+  const vals = rows.map(r => r.v);
+  const max = Math.max(...vals, 0), min = zero ? Math.min(...vals, 0) : 0;
+  const span = (max - min) || 1;
+  const plotW = w - padL - padR, plotH = hgt - padT - padB;
+  const bw = Math.min(58, plotW / rows.length - 14);
+  const yOf = v => padT + plotH - ((v - min) / span) * plotH;
+  const svg = el('svg', { width: w, height: hgt, viewBox: `0 0 ${w} ${hgt}`, role: 'img',
+                          'aria-label': opts.aria || 'Graphique en barres' });
+
+  const y0 = yOf(0);
+  svg.appendChild(el('line', { x1: padL, y1: y0, x2: w - padR, y2: y0,
+    stroke: 'var(--grid)', 'stroke-width': 1 }));
+
+  rows.forEach((r, i) => {
+    const cx = padL + (i + 0.5) * (plotW / rows.length);
+    const y = yOf(r.v), hh = Math.abs(y0 - y);
+    const c = colorFn ? colorFn(r, i) : color;
+    const g = el('g');
+    g.appendChild(el('rect', { x: cx - bw / 2, y: Math.min(y, y0), width: bw,
+      height: Math.max(2, hh), rx: 4, fill: c }));
+    svg.appendChild(g);
+    bindTip(g, r.n, tipLines ? tipLines(r) : [valFmt(r.v)]);
+
+    svg.appendChild(el('text', { x: cx, y: (r.v >= 0 ? y - 7 : y + 15), 'text-anchor': 'middle',
+      'font-size': 11.5, fill: 'var(--ink-2)', 'font-family': 'IBM Plex Mono, monospace' },
+      valFmt(r.v)));
+    svg.appendChild(el('text', { x: cx, y: hgt - 8, 'text-anchor': 'middle', 'font-size': 11.5,
+      fill: 'var(--ink-3)' }, r.n));
+  });
+  mount.replaceChildren(svg);
+}
+
+/* ---------- barres groupées ---------- */
+function groupedBar(mount, rows, opts = {}) {
+  const { labelW = 132, barH = 9, inner = 3, gap = 15, colors = ['var(--s1)', 'var(--s0)'],
+          keys = ['a', 'b'], names = ['A', 'B'], fmt = v => pct(v) } = opts;
+  const w = opts.width || Math.max(380, mount.parentElement.clientWidth || 440);
+  const rowH = barH * 2 + inner + gap;
+  const h = rows.length * rowH + 6;
+  const plotL = labelW, plotR = w - 58;
+  const max = Math.max(...rows.flatMap(r => keys.map(k => r[k]))) * 1.05;
+  const svg = el('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: 'img',
+    'aria-label': opts.aria || 'Graphique en barres groupées' });
+
+  rows.forEach((r, i) => {
+    const y = i * rowH + 4;
+    svg.appendChild(el('text', { x: plotL - 10, y: y + barH + 4, 'text-anchor': 'end',
+      'font-size': 12, fill: 'var(--ink-2)' }, r.n));
+    keys.forEach((k, j) => {
+      const by = y + j * (barH + inner);
+      const bw = Math.max(2, (r[k] / max) * (plotR - plotL));
+      const g = el('g');
+      g.appendChild(el('rect', { x: plotL, y: by, width: bw, height: barH, rx: 3, fill: colors[j] }));
+      svg.appendChild(g);
+      bindTip(g, r.n, [names[j] + ' : ' + fmt(r[k])]);
+      svg.appendChild(el('text', { x: plotL + bw + 7, y: by + barH - 0.5, 'font-size': 10.5,
+        fill: 'var(--ink-3)', 'font-family': 'IBM Plex Mono, monospace' }, fmt(r[k])));
+    });
+  });
+  mount.replaceChildren(svg);
+}
+
+/* ---------- courbe ---------- */
+function lineChart(mount, series, opts = {}) {
+  const { hgt = 250, yFmt = kUsd, xLabels = [], areas = true } = opts;
+  const w = opts.width || Math.max(420, mount.parentElement.clientWidth || 640);
+  const padL = 52, padR = 14, padT = 16, padB = 30;
+  const plotW = w - padL - padR, plotH = hgt - padT - padB;
+  const all = series.flatMap(s => s.pts.map(p => p.v));
+  const max = Math.max(...all) * 1.08, min = 0;
+  const n = Math.max(...series.map(s => s.pts.length ? s.pts[s.pts.length - 1].i : 0)) + 1;
+  const xOf = i => padL + (n <= 1 ? 0 : (i / (n - 1)) * plotW);
+  const yOf = v => padT + plotH - ((v - min) / (max - min || 1)) * plotH;
+  const svg = el('svg', { width: w, height: hgt, viewBox: `0 0 ${w} ${hgt}`, role: 'img',
+    'aria-label': opts.aria || 'Graphique en courbe' });
+
+  for (let t = 0; t <= 4; t++) {
+    const v = min + (max - min) * t / 4, y = yOf(v);
+    svg.appendChild(el('line', { x1: padL, y1: y, x2: w - padR, y2: y,
+      stroke: 'var(--grid)', 'stroke-width': 1 }));
+    svg.appendChild(el('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 10.5,
+      fill: 'var(--ink-3)', 'font-family': 'IBM Plex Mono, monospace' }, yFmt(v)));
+  }
+  xLabels.forEach(({ i, t }) => {
+    svg.appendChild(el('text', { x: xOf(i), y: hgt - 9, 'text-anchor': 'middle', 'font-size': 10.5,
+      fill: 'var(--ink-3)', 'font-family': 'IBM Plex Mono, monospace' }, t));
+  });
+
+  series.forEach(s => {
+    const d = s.pts.map((p, k) => (k ? 'L' : 'M') + xOf(p.i) + ' ' + yOf(p.v)).join(' ');
+    if (areas && s.area !== false) {
+      const first = s.pts[0], last = s.pts[s.pts.length - 1];
+      svg.appendChild(el('path', {
+        d: d + ` L${xOf(last.i)} ${yOf(min)} L${xOf(first.i)} ${yOf(min)} Z`,
+        fill: s.color, opacity: 0.11
+      }));
+    }
+    svg.appendChild(el('path', { d, fill: 'none', stroke: s.color, 'stroke-width': 2,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round',
+      'stroke-dasharray': s.dashed ? '5 4' : 'none' }));
+    if (s.endMarker) {
+      const last = s.pts[s.pts.length - 1];
+      svg.appendChild(el('circle', { cx: xOf(last.i), cy: yOf(last.v), r: 4.5, fill: s.color,
+        stroke: 'var(--surface)', 'stroke-width': 2 }));
+    }
+  });
+
+  /* couche de survol : une bande par point d'abscisse */
+  const cross = el('line', { x1: 0, y1: padT, x2: 0, y2: padT + plotH, stroke: 'var(--axis)',
+    'stroke-width': 1, opacity: 0 });
+  svg.appendChild(cross);
+  for (let i = 0; i < n; i++) {
+    const band = el('rect', { x: xOf(i) - plotW / (2 * (n - 1 || 1)), y: padT,
+      width: plotW / (n - 1 || 1), height: plotH, fill: 'transparent' });
+    const hits = series.map(s => ({ s, p: s.pts.find(p => p.i === i) })).filter(o => o.p);
+    if (!hits.length) continue;
+    band.addEventListener('mouseenter', e => {
+      cross.setAttribute('x1', xOf(i)); cross.setAttribute('x2', xOf(i));
+      cross.setAttribute('opacity', '.5');
+      showTip(e, hits[0].p.label, hits.map(o => o.s.name + ' : ' + yFmt(o.p.v)));
+    });
+    band.addEventListener('mousemove', moveTip);
+    band.addEventListener('mouseleave', () => { cross.setAttribute('opacity', '0'); hideTip(); });
+    svg.appendChild(band);
+  }
+  mount.replaceChildren(svg);
+}
+
+/* ---------- carte de chaleur ---------- */
+function heatmap(mount, data, opts = {}) {
+  const { cell = 52, rowLabelW = 52, headH = 26 } = opts;
+  const cols = data.cols, rows = data.index, vals = data.vals;
+  const w = rowLabelW + cols.length * cell + 6;
+  const h = headH + rows.length * cell + 22;
+  const flat = vals.flat().filter(v => v != null && v > 0);
+  const max = Math.max(...flat, 1);
+  const svg = el('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: 'img',
+    'aria-label': 'Carte de chaleur du taux de rétention par cohorte' });
+
+  cols.forEach((c, j) => {
+    svg.appendChild(el('text', { x: rowLabelW + j * cell + cell / 2, y: 16, 'text-anchor': 'middle',
+      'font-size': 11, fill: 'var(--ink-3)', 'font-family': 'IBM Plex Mono, monospace' }, c));
+  });
+  rows.forEach((r, i) => {
+    svg.appendChild(el('text', { x: rowLabelW - 10, y: headH + i * cell + cell / 2 + 4,
+      'text-anchor': 'end', 'font-size': 11, fill: 'var(--ink-3)',
+      'font-family': 'IBM Plex Mono, monospace' }, r));
+    cols.forEach((c, j) => {
+      const v = vals[i][j];
+      const x = rowLabelW + j * cell, y = headH + i * cell;
+      if (v == null || v === 0) {
+        svg.appendChild(el('rect', { x: x + 1, y: y + 1, width: cell - 2, height: cell - 2, rx: 4,
+          fill: 'var(--surface-2)' }));
+        return;
+      }
+      const t = v / max;
+      const g = el('g');
+      g.appendChild(el('rect', { x: x + 1, y: y + 1, width: cell - 2, height: cell - 2, rx: 4,
+        fill: 'var(--s0)', opacity: 0.14 + t * 0.86 }));
+      g.appendChild(el('text', { x: x + cell / 2, y: y + cell / 2 + 4, 'text-anchor': 'middle',
+        'font-size': 11, 'font-family': 'IBM Plex Mono, monospace', 'font-weight': 500,
+        fill: t > 0.52 ? 'var(--surface)' : 'var(--ink)' }, Math.round(v) + '%'));
+      svg.appendChild(g);
+      bindTip(g, 'Cohorte ' + r + ' en ' + c, ['Taux de rétention : ' + pct(v)]);
+    });
+  });
+  svg.appendChild(el('text', { x: 0, y: h - 5, 'font-size': 11, fill: 'var(--ink-3)' },
+    "Lignes : année d'inscription · Colonnes : année d'activité"));
+  mount.replaceChildren(svg);
+}
+
+/* =========================================================
+   Rendu
+   ========================================================= */
+function renderKpis() {
+  const o = D.overview, l = D.logistique;
+  const items = [
+    ["Chiffre d'affaires", kUsd(o.ca_total), "cumulé 2021-2025", "var(--s0)"],
+    ["Bénéfice net", kUsd(o.benefice_total), "sur la période", "var(--good)"],
+    ["Marge nette réelle", pct(o.marge_nette_pct, 2), "et non 33,45 % affichés", "var(--critical)"],
+    ["Panier moyen", usd(o.panier_moyen, 0), "par commande", "var(--s0)"],
+    ["Commandes", fr.format(o.nb_commandes), "dont 931 annulées", "var(--s0)"],
+    ["Clients", fr.format(o.nb_clients), o.nb_clients_vip + " clients VIP", "var(--s0)"],
+    ["Croissance 2025", "+16,4 %", "contre +51 % en 2022", "var(--warning)"],
+    ["Taux de retour", pct(o.taux_retour_pct, 1), kUsd(D.retours.montant_rembourse_total) + " remboursés", "var(--critical)"],
+    ["Taux d'annulation", pct(o.taux_annulation_pct, 1), "931 commandes", "var(--warning)"],
+    ["Délai de livraison", dec(l.delai_moyen_jours) + " j", "médiane à 2 jours", "var(--good)"],
+    ["Satisfaction", dec(l.satisfaction_moyenne) + " / 5", "2,91 en cas de retard", "var(--warning)"],
+    ["Budget marketing", pct(31.3, 1), "du CA · norme 8 à 12 %", "var(--critical)"],
+  ];
+  document.getElementById('kpis').innerHTML = items.map(([lab, val, note, c]) => `
+    <div class="kpi" style="--accent:${c}">
+      <span class="kpi-label">${lab}</span>
+      <span class="kpi-value">${val}</span>
+      <span class="kpi-note">${note}</span>
+    </div>`).join('');
+}
+
+function renderFindings() {
+  const f = [
+    ["crit", "Surstock critique", 'Le stock est valorisé à <span class="figure">8,02 M$</span> pour un coût des ventes annuel de 274 k$, soit <span class="figure">29,3 années</span> de couverture. Les lignes en surstock immobilisent à elles seules 4,77 M$.'],
+    ["crit", "Objectifs commerciaux inopérants", 'Aucun des <span class="figure">500 objectifs</span> n&rsquo;a été atteint en cinq ans. Taux de réalisation moyen : <span class="figure">14,2 %</span>. Primes versées sur la période : 69 $.'],
+    ["crit", "Attribution marketing incohérente", 'Les campagnes déclarent <span class="figure">3,25 M$</span> de CA généré, soit <span class="figure">136 %</span> du chiffre d&rsquo;affaires réel de l&rsquo;entreprise. 55 campagnes affichent un retour inférieur à 1.'],
+    ["warn", "Marge surestimée dans le reporting", 'Le tableau de bord affiche <span class="figure">33,45 %</span> au lieu de <span class="figure">28,76 %</span> : une moyenne de pourcentages au lieu d&rsquo;un ratio pondéré. Écart de 4,7 points.'],
+    ["warn", "Double concentration du chiffre d'affaires", 'Le e-commerce pèse <span class="figure">56,7 %</span> du CA et la province de Kinshasa <span class="figure">79,6 %</span>. Par ailleurs, 20 % des clients génèrent 62 % du chiffre d&rsquo;affaires.'],
+    ["warn", "Croissance en décélération", 'Le rythme annuel passe de <span class="figure">+51 %</span> en 2022 à <span class="figure">+16 %</span> en 2025 : divisé par trois en quatre ans. Le panier moyen plafonne depuis 2024.'],
+  ];
+  document.getElementById('findings').innerHTML = f.map(([sev, t, d]) => `
+    <article class="finding ${sev}">
+      <span class="sev-chip"><span class="sev-dot"></span>${sev === 'crit' ? 'Critique' : 'À surveiller'}</span>
+      <h3>${t}</h3>
+      <p>${d}</p>
+    </article>`).join('');
+}
+
+function renderClientKpis() {
+  const c = D.concentration, d = D.demo;
+  const items = [
+    ['Part du CA · 20 % meilleurs clients', pct(c.part_ca_top_20pct_clients), 'concentration très marquée', 'var(--s0)'],
+    ['Écart de valeur vie VIP / standard', dec(d.clv_vip / d.clv_non_vip, 1) + ' ×', usd(d.clv_vip, 0) + ' contre ' + usd(d.clv_non_vip, 0), 'var(--good)'],
+    ['Clients perdus ou inactifs', fr.format(c.statut_repartition.Perdu + c.statut_repartition.Inactif), '31,5 % de la base', 'var(--critical)'],
+    ['Clients jamais actifs', fr.format(c.statut_repartition['Jamais Actif']), 'inscrits sans aucune commande', 'var(--critical)'],
+    ['Âge moyen', dec(d.age_moyen, 1) + ' ans', 'répartition homogène par tranche', 'var(--s0)'],
+    ['Revenu mensuel moyen', usd(d.revenu_moyen, 0), 'déclaré par les clients', 'var(--s0)'],
+  ];
+  document.getElementById('client-kpis').innerHTML = items.map(([lab, val, note, c2]) => `
+    <div class="kpi" style="--accent:${c2}">
+      <span class="kpi-label">${lab}</span>
+      <span class="kpi-value">${val}</span>
+      <span class="kpi-note">${note}</span>
+    </div>`).join('');
+}
+
+function renderStockKpis() {
+  const s = D.stocks;
+  const items = [
+    ["Valeur du stock", kUsd(s.valeur_stock_totale), "6 000 lignes de stock", "var(--critical)"],
+    ["Coût des ventes annuel", kUsd(274139), "moyenne 2021-2025", "var(--s0)"],
+    ["Couverture de stock", "29,3 ans", "norme du secteur : 2 à 4 mois", "var(--critical)"],
+    ["Rotation moyenne", "0,16", "renouvellement tous les 6 ans", "var(--critical)"],
+    ["Achats fournisseurs", kUsd(D.four.montant_achats_total), "3,6 fois le coût des ventes", "var(--critical)"],
+    ["Écarts d'inventaire", pct(D.inventaires["taux_ecart_%"]), "des comptages · 13 644 $ de perte", "var(--warning)"],
+  ];
+  document.getElementById('stock-kpis').innerHTML = items.map(([lab, val, note, c]) => `
+    <div class="kpi" style="--accent:${c}">
+      <span class="kpi-label">${lab}</span>
+      <span class="kpi-value">${val}</span>
+      <span class="kpi-note">${note}</span>
+    </div>`).join('');
+}
+
+function renderRfmTable() {
+  document.getElementById('rfm-rows').innerHTML = D.rfm.map(r => `
+    <tr>
+      <td>${r.n}</td>
+      <td class="n">${fr.format(r.nb)}</td>
+      <td class="n">${pct(r.pcl)}</td>
+      <td class="n">${usd(r.ca, 0)}</td>
+      <td class="n">${pct(r.pca)}</td>
+      <td class="n">${usd(r.clv, 0)}</td>
+    </tr>`).join('');
+}
+
+function renderAbcTable() {
+  document.getElementById('abc-table').innerHTML = `
+    <div class="table-scroll">
+      <table style="min-width:0">
+        <thead><tr><th>Classe</th><th class="n">Références</th><th class="n">% catalogue</th><th class="n">% du CA</th></tr></thead>
+        <tbody>${D.abc.map(a => `
+          <tr><td><strong>Classe ${a.c}</strong></td><td class="n">${a.nb}</td>
+              <td class="n">${pct(a.pprod)}</td><td class="n">${pct(a.pca)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderActions() {
+  const a = [
+    ["Geler les approvisionnements et déstocker", "Suspendre les commandes sur les 1 392 lignes en surstock, écouler les 239 références de classe C, recentrer les achats sur les 254 références de classe A.", "2 à 3 M$", "Trésorerie · immédiat"],
+    ["Refonder le système d'objectifs commerciaux", "Recalibrer sur le réalisé de l'année précédente majoré de 15 à 20 %, différencier par point de vente, réactiver le système de primes.", "Pilotage", "Gouvernance · immédiat"],
+    ["Corriger le calcul de la marge", "Remplacer la moyenne des marges par le rapport bénéfice total sur chiffre d'affaires total, et auditer les autres indicateurs construits de la même façon.", "4,7 points", "Fiabilité · immédiat"],
+    ["Auditer et réallouer le budget marketing", "Refondre le modèle d'attribution avant toute décision, arrêter les 55 campagnes non rentables, renforcer WhatsApp Business.", "190 à 400 k$", "Économie · 3 à 6 mois"],
+    ["Réduire les retours pour problème de taille", "Guide des tailles avec mensurations réelles, photos portées systématiques, conseil taille sur WhatsApp avant validation de commande.", "18 à 24 k$/an", "Économie · 3 à 6 mois"],
+    ["Réviser la politique promotionnelle", "Cesser les promotions sur les références de classe A, les réserver à l'écoulement du stock dormant, mesurer l'effet incrémental avant reconduction.", "36 k$", "Marge · 3 à 6 mois"],
+    ["Structurer la fidélisation des Champions", "Statut privilégié, conseiller dédié joignable par WhatsApp, accès prioritaire aux collections, alerte en cas de baisse d'activité.", "1,17 M$ protégés", "Rétention · 6 mois"],
+    ["Réactiver les clients perdus et inactifs", "Campagne de réactivation ciblée par WhatsApp, analyse du parcours des 257 inscrits sans achat, relance automatique à 60 et 120 jours.", "80 à 150 k$/an", "CA · 6 à 12 mois"],
+    ["Fiabiliser la livraison à domicile", "Auditer le processus interne de préparation et d'expédition, fixer un objectif de ponctualité à 95 %, renforcer l'emballage.", "+1,1 pt satisfaction", "Qualité · 6 à 12 mois"],
+    ["Renforcer le contrôle des inventaires", "Inventaires tournants mensuels sur les références de classe A, traçabilité systématique des mouvements de stock.", "10 à 14 k$/an", "Démarque · 6 à 12 mois"],
+    ["Homogénéiser la performance commerciale", "Formaliser les pratiques des meilleurs vendeurs, former le tiers le moins performant, développer les accessoires en vente complémentaire.", "60 à 100 k$/an", "CA · 6 à 12 mois"],
+  ];
+  document.getElementById('actions').innerHTML = a.map(([t, d, imp, meta], i) => `
+    <article class="action">
+      <div class="action-rank">${String(i + 1).padStart(2, '0')}</div>
+      <div><h3>${t}</h3><p>${d}</p></div>
+      <div class="action-impact">
+        <span class="val">${imp}</span>
+        <span class="pill neutral">${meta}</span>
+      </div>
+    </article>`).join('');
+}
+
+function renderCharts() {
+  vbar(document.getElementById('ch-ca-annuel'),
+    D.annual.map(a => ({ n: a.y, v: a.ca, _a: a })),
+    { color: 'var(--s0)', hgt: 236,
+      tipLines: r => [usd(r._a.ca, 0), fr.format(r._a.nb) + ' commandes',
+                      'Panier moyen : ' + usd(r._a.panier, 0), 'Marge : ' + pct(r._a.marge, 2)],
+      aria: "Chiffre d'affaires annuel de 2021 à 2025" });
+
+  vbar(document.getElementById('ch-croissance'),
+    D.annual.filter(a => a.croiss != null).map(a => ({ n: a.y, v: a.croiss })),
+    { color: 'var(--s2)', hgt: 236, valFmt: v => '+' + dec(v, 1) + ' %',
+      tipLines: r => ['Croissance : +' + dec(r.v, 1) + ' %'],
+      aria: "Taux de croissance annuel du chiffre d'affaires" });
+
+  const mLabels = [];
+  D.monthly.forEach((m, i) => { if (m.m.endsWith('-01')) mLabels.push({ i, t: m.m.slice(0, 4) }); });
+  lineChart(document.getElementById('ch-mensuel'),
+    [{ name: 'CA mensuel', color: 'var(--s0)', endMarker: true,
+       pts: D.monthly.map((m, i) => ({ i, v: m.v, label: m.m })) }],
+    { hgt: 244, xLabels: mLabels, aria: "Chiffre d'affaires mensuel de 2021 à 2025" });
+
+  hbar(document.getElementById('ch-canal'), D.canal.map(c => ({ n: c.n, v: c.ca, _c: c })),
+    { labelW: 148, color: 'var(--s0)',
+      tipLines: r => [usd(r._c.ca, 0), pct(r._c.part) + ' du CA total',
+                      fr.format(r._c.nb) + ' commandes', 'Panier moyen : ' + usd(r._c.panier, 0)],
+      aria: "Chiffre d'affaires par canal de vente" });
+
+  hbar(document.getElementById('ch-boutique'),
+    D.boutique.map(b => ({ n: b.n.replace('E-commerce', 'E-commerce ★'), v: b.ca, _b: b })),
+    { labelW: 168, barH: 16, gap: 8, color: 'var(--s0)',
+      colorFn: r => r._b.n.includes('E-commerce') ? 'var(--s2)' : 'var(--s0)',
+      tipLines: r => [usd(r._b.ca, 0), fr.format(r._b.nb) + ' commandes'],
+      aria: "Chiffre d'affaires par point de vente" });
+
+  hbar(document.getElementById('ch-categorie'),
+    D.categorie.map(c => ({ n: c.n, v: c.ca, _c: c })),
+    { labelW: 178, barH: 16, gap: 8, color: 'var(--s0)',
+      tipLines: r => [usd(r._c.ca, 0), 'Marge : ' + pct(r._c.marge),
+                      fr.format(r._c.qte) + ' articles vendus'],
+      aria: "Chiffre d'affaires par catégorie de produits" });
+
+  /* Pareto : part cumulée du CA par nombre de références */
+  const abcPts = [];
+  let cum = 0;
+  const totalCa = D.abc.reduce((s, a) => s + a.ca, 0);
+  const marks = [{ nb: 0, p: 0 }];
+  D.abc.forEach(a => { cum += a.ca; marks.push({ nb: marks[marks.length - 1].nb + a.nb, p: cum / totalCa * 100 }); });
+  lineChart(document.getElementById('ch-pareto'),
+    [{ name: 'Part cumulée du CA', color: 'var(--s0)', endMarker: true,
+       pts: marks.map((m, i) => ({ i, v: m.p, label: m.nb + ' références' })) }],
+    { hgt: 196, yFmt: v => Math.round(v) + ' %',
+      xLabels: marks.map((m, i) => ({ i, t: m.nb })),
+      aria: "Courbe de Pareto de la concentration du chiffre d'affaires par référence" });
+
+  groupedBar(document.getElementById('ch-rfm'),
+    D.rfm.map(r => ({ n: r.n, a: r.pcl, b: r.pca })),
+    { keys: ['a', 'b'], names: ['Part des clients', 'Part du CA'],
+      colors: ['var(--s1)', 'var(--s0)'], labelW: 128,
+      aria: "Poids de chaque segment RFM en clients et en chiffre d'affaires" });
+
+  heatmap(document.getElementById('ch-cohortes'), D.cohortes, { cell: 50 });
+
+  hbar(document.getElementById('ch-motifs'),
+    D.motifs.map(m => ({ n: m.n, v: m.nb, _m: m })),
+    { labelW: 192, valFmt: v => fr.format(v), valW: 56,
+      colorFn: r => r._m.part > 40 ? 'var(--s3)' : 'var(--s0)',
+      tipLines: r => [fr.format(r._m.nb) + ' retours', pct(r._m.part) + ' du total',
+                      usd(r._m.mt, 0) + ' remboursés'],
+      aria: 'Répartition des motifs de retour produit' });
+
+  hbar(document.getElementById('ch-transp'),
+    D.transp.map(t => ({ n: t.n, v: t.retard, _t: t })),
+    { labelW: 168, valFmt: v => dec(v, 1) + ' %', valW: 58,
+      colorFn: r => r._t.retard > 10 ? 'var(--s3)' : 'var(--s5)',
+      tipLines: r => [fr.format(r._t.nb) + ' livraisons', 'Retard : ' + pct(r._t.retard),
+                      'Délai moyen : ' + dec(r._t.delai) + ' j',
+                      'Satisfaction : ' + dec(r._t.sat) + ' / 5'],
+      aria: 'Taux de retard de livraison par transporteur' });
+
+  hbar(document.getElementById('ch-roas'),
+    D.mkt.map(m => ({ n: m.n, v: m.roas, _m: m })),
+    { labelW: 148, valFmt: v => dec(v, 2), valW: 52, refLine: 1, refLabel: 'seuil 1',
+      colorFn: r => r._m.roas >= 9 ? 'var(--s5)' : 'var(--s0)',
+      tipLines: r => ['Retour : ' + dec(r._m.roas, 2),
+                      'Budget : ' + usd(r._m.budget, 0),
+                      'CA déclaré : ' + usd(r._m.ca, 0),
+                      'Coût par conversion : ' + usd(r._m.cpc, 2)],
+      aria: 'Retour sur investissement publicitaire par canal marketing' });
+
+  const p0 = D.promo.find(p => !p.Avec_Promo), p1 = D.promo.find(p => p.Avec_Promo);
+  groupedBar(document.getElementById('ch-promo'),
+    [{ n: 'Panier moyen', a: p0.Panier_Moyen, b: p1.Panier_Moyen },
+     { n: 'Marge moyenne', a: p0.Marge_Moy * 100, b: p1.Marge_Moy * 100 }],
+    { keys: ['a', 'b'], names: ['Sans promotion', 'Avec promotion'],
+      colors: ['var(--s4)', 'var(--s3)'], labelW: 118, barH: 15, inner: 5, gap: 26,
+      fmt: v => v > 60 ? usd(v, 0) : pct(v),
+      aria: 'Comparaison du panier moyen et de la marge avec et sans promotion' });
+
+  vbar(document.getElementById('ch-stock'),
+    Object.entries(D.stocks.statut_repartition).map(([n, v]) => ({ n, v })),
+    { hgt: 224, valFmt: v => fr.format(v),
+      colorFn: r => r.n === 'Surstock' ? 'var(--s3)' : r.n === 'Rupture' ? 'var(--s2)'
+                  : r.n === 'Faible' ? 'var(--s4)' : 'var(--s5)',
+      tipLines: r => [fr.format(r.v) + ' lignes de stock'],
+      aria: 'Répartition des lignes de stock par statut' });
+
+  /* Projection : historique + prévision, jointes au dernier point observé */
+  const hist = D.monthly.map((m, i) => ({ i, v: m.v, label: m.m }));
+  const start = D.monthly.length - 1;
+  const fc = [{ i: start, v: D.monthly[start].v, label: D.monthly[start].m }]
+    .concat(D.prev.map((p, k) => ({ i: start + 1 + k, v: p.v, label: p.m + ' (prévu)' })));
+  const pLabels = [];
+  D.monthly.forEach((m, i) => { if (m.m.endsWith('-01')) pLabels.push({ i, t: m.m.slice(0, 4) }); });
+  pLabels.push({ i: start + 1, t: '2026' });
+  lineChart(document.getElementById('ch-prev'),
+    [{ name: 'Historique observé', color: 'var(--s0)', pts: hist },
+     { name: 'Projection 2026', color: 'var(--s2)', pts: fc, dashed: true, endMarker: true, area: false }],
+    { hgt: 288, xLabels: pLabels,
+      aria: "Chiffre d'affaires mensuel observé et projection pour 2026" });
+}
+
+function renderAll() {
+  renderKpis(); renderFindings(); renderClientKpis(); renderStockKpis();
+  renderRfmTable(); renderAbcTable(); renderActions(); renderCharts();
+}
+renderAll();
+
+let rt;
+addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(renderCharts, 180); });
+</script>
